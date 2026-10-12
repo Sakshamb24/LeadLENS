@@ -2,6 +2,8 @@
 
 **Turn a lead list into a call list.**
 
+**Live demo: https://leadlens1.vercel.app** (click **Sample** to load 26 real small businesses, or upload your own CSV)
+
 Tools like SaaSquatch are good at producing lists of companies. The problem comes right after that: you have 500 rows, and you need to know which 20 to call today and what to say to them.
 
 LeadLens takes any lead list (a SaaSquatch export, an Apollo export or a hand-made sheet). For each lead it:
