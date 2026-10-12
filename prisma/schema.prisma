@@ -1,0 +1,35 @@
+// SQLite locally. For production, switch provider to "postgresql"
+// and point DATABASE_URL at Neon/Supabase. Nothing else changes.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id            String    @id @default(cuid())
+  name          String
+  domain        String?   @unique
+  nameKey       String
+  inputIndustry String?
+  inputLocation String?
+  status        String    @default("pending") // pending | done | failed | blocked
+  error         String?
+  enrichment    String? // JSON (see lib/types.ts -> Enrichment)
+  enrichedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([nameKey])
+}
+
+// One row per crawled domain. Re-imports within the TTL reuse it,
+// so we never hit the same website twice in a week.
+model DomainCache {
+  domain    String   @id
+  data      String
+  fetchedAt DateTime @default(now())
+}
