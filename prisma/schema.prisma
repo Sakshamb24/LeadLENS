@@ -1,11 +1,11 @@
-// SQLite locally. For production, switch provider to "postgresql"
-// and point DATABASE_URL at Neon/Supabase. Nothing else changes.
+// PostgreSQL (Neon in production). For a zero-setup local run you can switch
+// provider to "sqlite" and use DATABASE_URL="file:./dev.db". Nothing else changes.
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

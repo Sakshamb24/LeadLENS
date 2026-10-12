@@ -25,11 +25,11 @@ It was built for the search-fund / ETA use case that Caprae and SaaSquatch serve
 Requirements: Node 20+.
 
 ```bash
-git clone <this repo>
-cd leadlens
+git clone https://github.com/Sakshamb24/LeadLENS.git
+cd LeadLENS
 npm install          # also generates the Prisma client
-cp .env.example .env # DATABASE_URL="file:./dev.db" (SQLite, zero setup)
-npm run db:push      # creates the local database
+cp .env.example .env # paste a Postgres URL (a free Neon database works)
+npm run db:push      # creates the tables
 npm run dev          # http://localhost:3000
 ```
 
@@ -71,8 +71,8 @@ Browser (Next.js client)                     Server (Next.js route handlers, Nod
                                             └──────────────┬────────────────────────────────┘
                                                            │ Prisma
                                                 ┌──────────▼─────────┐
-                                                │ SQLite (local)     │
-                                                │ Postgres (prod)    │
+                                                │ Postgres (Neon)    │
+                                                │ serverless, on AWS │
                                                 └────────────────────┘
 ```
 
@@ -87,7 +87,7 @@ Browser (Next.js client)                     Server (Next.js route handlers, Nod
 | Validation | Node `dns.resolveMx` for email domains |
 | CSV | **PapaParse** (import and export, in the browser) |
 | ORM | **Prisma 6** |
-| Database | **SQLite** locally (one file, zero setup). **PostgreSQL on Neon** in production. |
+| Database | **PostgreSQL on Neon** (serverless Postgres). SQLite also works for an offline local run. |
 | Hosting | **Vercel**: static frontend on the CDN, API routes as serverless functions |
 
 ### Data storage
@@ -97,7 +97,7 @@ Two tables ([prisma/schema.prisma](prisma/schema.prisma)):
 - **`Lead`** holds one row per company. `domain` is unique; `nameKey` (a normalised name with LLC/Inc/punctuation stripped) is indexed for name-based dedup. Enrichment results are stored as a JSON column.
 - **`DomainCache`** holds one crawl result per domain, with a timestamp.
 
-Switching from SQLite to Postgres means changing `provider` in the schema and setting `DATABASE_URL`. No code changes.
+To run fully offline, set `provider = "sqlite"` in the schema and `DATABASE_URL="file:./dev.db"`. No code changes.
 
 ### Caching and performance
 
@@ -126,10 +126,9 @@ Switching from SQLite to Postgres means changing `provider` in the schema and se
 ### Deployment (Vercel + Neon)
 
 1. Create a free Postgres database on [Neon](https://neon.tech) and copy the connection string.
-2. In `prisma/schema.prisma`, set `provider = "postgresql"`.
-3. Import the GitHub repo into [Vercel](https://vercel.com) and add the `DATABASE_URL` env var.
-4. Run `npx prisma db push` once against the Neon URL to create the tables.
-5. Every push to `main` now auto-deploys, and pull requests get preview URLs.
+2. Import the GitHub repo into [Vercel](https://vercel.com) and add the `DATABASE_URL` env var.
+3. Run `npx prisma db push` once against the Neon URL to create the tables.
+4. Every push to `main` now auto-deploys, and pull requests get preview URLs.
 
 The cloud is Vercel, which runs on AWS. Neon is also on AWS, so pick the same region as your Vercel functions.
 
