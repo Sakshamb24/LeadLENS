@@ -44,5 +44,3 @@ next-env.d.ts
 # local database
 prisma/dev.db*
 
-# local tooling
-.claude/
